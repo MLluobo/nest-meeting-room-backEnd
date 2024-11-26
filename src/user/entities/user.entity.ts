@@ -69,7 +69,7 @@ export class User {
     comment: '是否是管理员',
     default: false,
   })
-  isAdmin: false;
+  isAdmin: boolean;
 
   @CreateDateColumn()
   createTime: Date;
@@ -79,7 +79,7 @@ export class User {
 
   @ManyToMany(() => Role)
   @JoinTable({
-    name: 'user_role',
+    name: 'user_roles',
   })
   roles: Role[];
 }
