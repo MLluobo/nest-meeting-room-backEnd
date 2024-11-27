@@ -31,8 +31,8 @@ import * as path from 'path';
     // 引入全局配置模块
     ConfigModule.forRoot({
       isGlobal: true,
-      //   envFilePath: 'src/.env',
-      envFilePath: path.join(__dirname, '.env'),
+      envFilePath: 'src/.env',
+      //   envFilePath: path.join(__dirname, '.env'),
     }),
 
     // 引入 TypeORM 连接数据库模块
