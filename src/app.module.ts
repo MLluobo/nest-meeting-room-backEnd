@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { LoginGuard } from './login.guard';
 import { PermissionGuard } from './permission.guard';
-
+import * as path from 'path';
 @Module({
   imports: [
     // 引入JWT
@@ -31,7 +31,8 @@ import { PermissionGuard } from './permission.guard';
     // 引入全局配置模块
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: 'src/.env',
+      //   envFilePath: 'src/.env',
+      envFilePath: path.join(__dirname, '.env'),
     }),
 
     // 引入 TypeORM 连接数据库模块
