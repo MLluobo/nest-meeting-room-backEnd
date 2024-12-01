@@ -9,6 +9,8 @@ import {
   ParseIntPipe,
   BadRequestException,
   DefaultValuePipe,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
@@ -22,7 +24,9 @@ import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { generateParseIntPipe } from 'src/utils/utils';
-
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
+import { storage } from 'src/utils/my-file-storage';
 @Controller('user')
 export class UserController {
   constructor(
@@ -210,8 +214,6 @@ export class UserController {
     @UserInfo('userId') userId: number,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    console.log(userId);
-
     return await this.userService.update(userId, updateUserDto);
   }
 
@@ -222,6 +224,7 @@ export class UserController {
     return 'success';
   }
 
+  // 获取用户列表
   @Get('list')
   @RequireLogin()
   async list(
@@ -244,6 +247,30 @@ export class UserController {
       pageNo,
       pageSize,
     );
+  }
+
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      dest: 'uploads/',
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 3,
+      },
+      fileFilter(req, file, callback) {
+        // 获取文件后缀
+        const extname = path.extname(file.originalname);
+        if (['.png', '.jpg', '.gif'].includes(extname)) {
+          callback(null, true);
+        } else {
+          callback(new BadRequestException('只能上传图片'), false);
+        }
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    console.log('file', file);
+    return file.path;
   }
 
   // 数据初始化
